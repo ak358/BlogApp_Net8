@@ -13,8 +13,11 @@ namespace BlogApp_Net8.Models
 
         [NotMapped]
         public string CategoryName { get; set; } // 記事のカテゴリ名
+        public virtual Category Category { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
 
-        public virtual Category category{ get; set; }
-        public virtual ICollection<Comment> comments { get; set; }
+        //カテゴリ　１　記事 N
+        //記事　１　コメント N
+
     }
 }

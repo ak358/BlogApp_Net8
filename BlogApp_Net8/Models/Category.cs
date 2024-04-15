@@ -7,6 +7,10 @@ namespace BlogApp_Net8.Models
         public int Count { get; set; } // カテゴリに含まれる記事の数
 
         // カテゴリに属する記事のコレクション
-        public ICollection<Article> Articles { get; set; }
+        public virtual ICollection<Article> Articles { get; set; }
+
+        //カテゴリ　１　記事 N
+        //記事　１　コメント N
+
     }
 }
