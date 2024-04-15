@@ -1,3 +1,7 @@
+using BlogApp_Net8.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
 namespace BlogApp_Net8
 {
     public class Program
@@ -8,6 +12,9 @@ namespace BlogApp_Net8
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<BlogDbContext>(options =>
+                options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
             var app = builder.Build();
 
