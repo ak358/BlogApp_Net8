@@ -15,8 +15,5 @@ namespace BlogApp_Net8.Models
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
 
-        //カテゴリ　１　記事 N
-        //記事　１　コメント N
-
     }
 }

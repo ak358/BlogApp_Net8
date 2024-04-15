@@ -19,7 +19,7 @@ namespace BlogApp_Net8
                 {
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
                     options.SlidingExpiration = true;
-                    options.AccessDeniedPath = "/Forbidden/";
+                    options.AccessDeniedPath = "/access_denied";
                 });
 
             builder.Services.AddDbContext<BlogDbContext>(options =>
@@ -47,7 +47,7 @@ namespace BlogApp_Net8
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Login}/{action=login}/{id?}");
 
             app.Run();
         }

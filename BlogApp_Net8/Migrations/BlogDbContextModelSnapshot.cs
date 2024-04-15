@@ -132,7 +132,7 @@ namespace BlogApp_Net8.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BlogApp_Net8.Models.Article", b =>

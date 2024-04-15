@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogApp_Net8.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240415093736_init")]
+    [Migration("20240415094143_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -135,7 +135,7 @@ namespace BlogApp_Net8.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("BlogApp_Net8.Models.Article", b =>

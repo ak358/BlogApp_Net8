@@ -2,7 +2,7 @@
 {
     public class LoginViewModel
     {
-        public string Username { get; set; } // ユーザー名
+        public string UserName { get; set; } // ユーザー名
         public string Password { get; set; } // パスワード
     }
 }

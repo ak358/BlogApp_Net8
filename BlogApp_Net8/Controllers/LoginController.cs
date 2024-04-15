@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using BlogApp_Net8.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogApp_Net8.Controllers
 {
@@ -12,7 +13,7 @@ namespace BlogApp_Net8.Controllers
         private readonly BlogDbContext _context;
         public LoginController(BlogDbContext context)
         {
-            context = _context;
+            _context = context;
         }
 
         public IActionResult login()
@@ -21,63 +22,38 @@ namespace BlogApp_Net8.Controllers
         }
 
         [HttpPost]
-        public IActionResult login(LoginViewModel loginViewModel)
+        public async Task<IActionResult> login(LoginViewModel loginViewModel)
         {
 
-            //if (ModelState.IsValid)
-            //{
-            //    string username = 
-            //    string password =
-                
+            if (ModelState.IsValid)
+            {
+                User user = await _context.Users.Where(u => u.Username ==  loginViewModel.UserName).FirstOrDefaultAsync();
 
+                if(user != null){
+                    var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username)
+                };
 
-            //    var claims = new List<Claim>
-            //    {
-            //        new Claim(ClaimTypes.Name, user.Email),
-            //        new Claim("FullName", user.FullName),
-            //        new Claim(ClaimTypes.Role, "Administrator"),
-            //    };
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            //    var claimsIdentity = new ClaimsIdentity(
-            //        claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties
+                    {
+                    };
 
-            //    var authProperties = new AuthenticationProperties
-            //    {
-            //        //AllowRefresh = <bool>,
-            //        // Refreshing the authentication session should be allowed.
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
 
-            //        //ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
-            //        // The time at which the authentication ticket expires. A 
-            //        // value set here overrides the ExpireTimeSpan option of 
-            //        // CookieAuthenticationOptions set with AddCookie.
+                    return RedirectToAction("Index","Home");
 
-            //        //IsPersistent = true,
-            //        // Whether the authentication session is persisted across 
-            //        // multiple requests. When used with cookies, controls
-            //        // whether the cookie's lifetime is absolute (matching the
-            //        // lifetime of the authentication ticket) or session-based.
+                }
 
-            //        //IssuedUtc = <DateTimeOffset>,
-            //        // The time at which the authentication ticket was issued.
+            }
 
-            //        //RedirectUri = <string>
-            //        // The full path or absolute URI to be used as an http 
-            //        // redirect response value.
-            //    };
-
-            //    await HttpContext.SignInAsync(
-            //        CookieAuthenticationDefaults.AuthenticationScheme,
-            //        new ClaimsPrincipal(claimsIdentity),
-            //        authProperties);
-
-            //    _logger.LogInformation("User {Email} logged in at {Time}.",
-            //        user.Email, DateTime.UtcNow);
-
-            //    return LocalRedirect(Url.GetLocalUrl(returnUrl));
-            //}
-
-
-            return View();
+            return RedirectToAction("AccessDenied");
         }
 
         public async Task<IActionResult> logout()
@@ -86,9 +62,12 @@ namespace BlogApp_Net8.Controllers
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return View("login");
-
+            return RedirectToAction("login");
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View("AccessDenied");
+        }
     }
 }
