@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogApp_Net8.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240415085013_init")]
+    [Migration("20240415093736_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -50,9 +50,14 @@ namespace BlogApp_Net8.Migrations
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Articles");
                 });
@@ -72,7 +77,12 @@ namespace BlogApp_Net8.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
@@ -95,11 +105,37 @@ namespace BlogApp_Net8.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ArticleId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("BlogApp_Net8.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("BlogApp_Net8.Models.Article", b =>
@@ -110,7 +146,26 @@ namespace BlogApp_Net8.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BlogApp_Net8.Models.User", "User")
+                        .WithMany("Articles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlogApp_Net8.Models.Category", b =>
+                {
+                    b.HasOne("BlogApp_Net8.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BlogApp_Net8.Models.Comment", b =>
@@ -121,7 +176,15 @@ namespace BlogApp_Net8.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BlogApp_Net8.Models.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Article");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BlogApp_Net8.Models.Article", b =>
@@ -132,6 +195,13 @@ namespace BlogApp_Net8.Migrations
             modelBuilder.Entity("BlogApp_Net8.Models.Category", b =>
                 {
                     b.Navigation("Articles");
+                });
+
+            modelBuilder.Entity("BlogApp_Net8.Models.User", b =>
+                {
+                    b.Navigation("Articles");
+
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

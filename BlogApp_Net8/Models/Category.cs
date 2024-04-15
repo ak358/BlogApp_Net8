@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace BlogApp_Net8.Models
 {
     public class Category
@@ -8,6 +10,10 @@ namespace BlogApp_Net8.Models
 
         // カテゴリに属する記事のコレクション
         public virtual ICollection<Article> Articles { get; set; }
+
+        public int UserId { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
         //カテゴリ　１　記事 N
         //記事　１　コメント N

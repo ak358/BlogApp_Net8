@@ -16,8 +16,8 @@ namespace BlogApp_Net8.Models
         public virtual Category Category { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
 
-        //カテゴリ　１　記事 N
-        //記事　１　コメント N
-
+        public int UserId { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
     }
 }

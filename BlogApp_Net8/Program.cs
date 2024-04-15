@@ -1,4 +1,5 @@
 using BlogApp_Net8.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -12,6 +13,14 @@ namespace BlogApp_Net8
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                    options.SlidingExpiration = true;
+                    options.AccessDeniedPath = "/Forbidden/";
+                });
 
             builder.Services.AddDbContext<BlogDbContext>(options =>
                 options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
@@ -28,6 +37,9 @@ namespace BlogApp_Net8
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseRouting();
 

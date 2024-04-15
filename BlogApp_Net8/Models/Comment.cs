@@ -14,9 +14,10 @@ namespace BlogApp_Net8.Models
 
         // コメントが属する記事の ID を表す外部キー
         [NotMapped]
-        public int ArticleId { get; set; } 
+        public int ArticleId { get; set; }
 
-        //カテゴリ　１　記事 N
-        //記事　１　コメント N
+        public int UserId { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
     }
 }
