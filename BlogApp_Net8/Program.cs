@@ -25,6 +25,8 @@ namespace BlogApp_Net8
             builder.Services.AddDbContext<BlogDbContext>(options =>
                 options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
+            builder.Services.AddHttpContextAccessor();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -40,6 +42,8 @@ namespace BlogApp_Net8
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAntiforgery();
 
             app.UseRouting();
 

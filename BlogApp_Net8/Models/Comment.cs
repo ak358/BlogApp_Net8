@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlogApp_Net8.Models
@@ -10,6 +11,8 @@ namespace BlogApp_Net8.Models
 
         // コメントが属する記事を表すナビゲーションプロパティ
         [ForeignKey("ArticleId")]
+        [ValidateNever]
+
         public virtual Article Article { get; set; }
 
         // コメントが属する記事の ID を表す外部キー
@@ -18,6 +21,8 @@ namespace BlogApp_Net8.Models
 
         public int UserId { get; set; }
         [ForeignKey("UserId")]
+        [ValidateNever]
+
         public virtual User User { get; set; }
     }
 }

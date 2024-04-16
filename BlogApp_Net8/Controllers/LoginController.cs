@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using BlogApp_Net8.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlogApp_Net8.Controllers
 {
@@ -16,12 +17,15 @@ namespace BlogApp_Net8.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         public IActionResult login()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        [AutoValidateAntiforgeryToken]//書かなくてもPOSTメソッドには自動適用される
         public async Task<IActionResult> login(LoginViewModel loginViewModel)
         {
 
@@ -32,6 +36,7 @@ namespace BlogApp_Net8.Controllers
                 if(user != null){
                     var claims = new List<Claim>
                 {
+                    new Claim(ClaimTypes.NameIdentifier, (user.Id).ToString()),
                     new Claim(ClaimTypes.Name, user.Username)
                 };
 
@@ -47,7 +52,7 @@ namespace BlogApp_Net8.Controllers
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
 
-                    return RedirectToAction("Index","Home");
+                    return RedirectToAction("Index", "Articles");
 
                 }
 
@@ -56,6 +61,7 @@ namespace BlogApp_Net8.Controllers
             return RedirectToAction("AccessDenied");
         }
 
+        [Authorize]
         public async Task<IActionResult> logout()
         {
             // Clear the existing external cookie
@@ -64,6 +70,8 @@ namespace BlogApp_Net8.Controllers
 
             return RedirectToAction("login");
         }
+
+        [AllowAnonymous]
 
         public IActionResult AccessDenied()
         {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,11 +14,16 @@ namespace BlogApp_Net8.Models
 
         [NotMapped]
         public string CategoryName { get; set; } // ‹LŽ–‚ÌƒJƒeƒSƒŠ–¼
+
+        [ValidateNever]
         public virtual Category Category { get; set; }
+        [ValidateNever]
         public virtual ICollection<Comment> Comments { get; set; }
 
         public int UserId { get; set; }
+
         [ForeignKey("UserId")]
+        [ValidateNever]
         public virtual User User { get; set; }
     }
 }
