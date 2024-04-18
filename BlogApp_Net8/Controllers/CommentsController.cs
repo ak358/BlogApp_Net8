@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BlogApp_Net8.Data;
 using BlogApp_Net8.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BlogApp_Net8.Controllers
 {
@@ -50,12 +51,18 @@ namespace BlogApp_Net8.Controllers
         }
 
         // GET: Comments/Create
-        public IActionResult Create()
+        public IActionResult Create(int articleId)
         {
-            ViewData["ArticleId"] = new SelectList(_context.Articles, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            return View();
+            //コメントモデル
+            Comment comment = new()
+            {
+                ArticleId = articleId,
+                UserId = userId
+            };
+
+            return View(comment);
         }
 
         // POST: Comments/Create

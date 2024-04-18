@@ -17,7 +17,6 @@ namespace BlogApp_Net8.Controllers
     public class CategoriesController : Controller
     {
         private readonly BlogDbContext _context;
-        int _userId;    //ログイン中のユーザーID
 
         public CategoriesController(BlogDbContext context)
         {
@@ -28,10 +27,10 @@ namespace BlogApp_Net8.Controllers
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var categories = await _context.Categories
                                         .Include(c => c.User)
-                                        .Where(c => c.UserId == _userId)
+                                        .Where(c => c.UserId == userId)
                                         .ToListAsync();
 
             return View(categories);
@@ -40,14 +39,16 @@ namespace BlogApp_Net8.Controllers
         // GET: Categories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null)
             {
                 return NotFound();
             }
 
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var category = await _context.Categories
                 .Include(c => c.User)
-                .Where(c => c.UserId == _userId)
+                .Where(c => c.UserId == userId)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (category == null)
@@ -61,6 +62,8 @@ namespace BlogApp_Net8.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
             ViewData["UserId"] = new SelectList(_context.Users.Where(c => c.Id == _userId), "Id", "Id");
             return View();
         }
@@ -151,10 +154,11 @@ namespace BlogApp_Net8.Controllers
             {
                 return NotFound();
             }
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var category = await _context.Categories
                 .Include(c => c.User)
-                .Where(c => c.UserId == _userId)
+                .Where(c => c.UserId == userId)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (category == null)
