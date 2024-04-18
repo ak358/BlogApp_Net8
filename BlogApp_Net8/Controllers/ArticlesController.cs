@@ -9,6 +9,7 @@ using BlogApp_Net8.Data;
 using BlogApp_Net8.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace BlogApp_Net8.Controllers
 {
@@ -17,6 +18,7 @@ namespace BlogApp_Net8.Controllers
     {
         private readonly BlogDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        int _userId;    //ログイン中のユーザーID
 
         public ArticlesController(BlogDbContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -28,26 +30,26 @@ namespace BlogApp_Net8.Controllers
         public async Task<IActionResult> Index()
         {
             // ログイン中のユーザーのIDを取得
-            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            
+            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //_userId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+
             // userId を使用して記事を取得するクエリを構築
-            var blogDbContext = await _context.Articles
+            var articles = await _context.Articles
                 .Include(a => a.User)
                 .Include(a => a.Category)
                 .Include(a => a.Comments)
-                .Where(a => a.UserId == userId)
+                .Where(a => a.UserId == _userId)
                 .ToListAsync();
 
             // 取得した記事の中からカテゴリ名を取得する
-            foreach (var article in blogDbContext)
+            foreach (var categoryName in articles)
             {
                 // カテゴリ名を設定
-                article.CategoryName = article.Category?.CategoryName;
+                categoryName.CategoryName = categoryName.Category?.CategoryName;
             }
 
             // 記事のリストをビューに渡して返す
-            return View(blogDbContext);
+            return View(articles);
         }
 
         // GET: Articles/Details/5
@@ -78,7 +80,10 @@ namespace BlogApp_Net8.Controllers
         // GET: Articles/Create
         public IActionResult Create()
         {
-            ViewData["CategoryName"] = new SelectList(_context.Categories, "CategoryName", "CategoryName");
+            // ログイン中のユーザーのIDを取得
+            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View();
         }
 
@@ -105,7 +110,10 @@ namespace BlogApp_Net8.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryName"] = new SelectList(_context.Categories, "CategoryName", "CategoryName");
+            // ログイン中のユーザーのIDを取得
+            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View(article);
         }
 
@@ -122,7 +130,10 @@ namespace BlogApp_Net8.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryName"] = new SelectList(_context.Categories, "CategoryName", "CategoryName");
+            // ログイン中のユーザーのIDを取得
+            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View(article);
         }
 
@@ -159,7 +170,10 @@ namespace BlogApp_Net8.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryName"] = new SelectList(_context.Categories, "CategoryName", "CategoryName");
+            // ログイン中のユーザーのIDを取得
+            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View(article);
         }
 

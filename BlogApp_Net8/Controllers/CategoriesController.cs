@@ -17,20 +17,21 @@ namespace BlogApp_Net8.Controllers
     public class CategoriesController : Controller
     {
         private readonly BlogDbContext _context;
+        int _userId;    //ログイン中のユーザーID
 
         public CategoriesController(BlogDbContext context)
         {
             _context = context;
+
         }
 
         // GET: Categories
         public async Task<IActionResult> Index()
         {
-            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
+            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var categories = await _context.Categories
                                         .Include(c => c.User)
-                                        .Where(c => c.UserId == userId)
+                                        .Where(c => c.UserId == _userId)
                                         .ToListAsync();
 
             return View(categories);
@@ -46,7 +47,9 @@ namespace BlogApp_Net8.Controllers
 
             var category = await _context.Categories
                 .Include(c => c.User)
+                .Where(c => c.UserId == _userId)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (category == null)
             {
                 return NotFound();
@@ -58,7 +61,7 @@ namespace BlogApp_Net8.Controllers
         // GET: Categories/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users.Where(c => c.Id == _userId), "Id", "Id");
             return View();
         }
 
@@ -151,7 +154,9 @@ namespace BlogApp_Net8.Controllers
 
             var category = await _context.Categories
                 .Include(c => c.User)
+                .Where(c => c.UserId == _userId)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (category == null)
             {
                 return NotFound();
