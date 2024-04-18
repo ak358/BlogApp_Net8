@@ -68,7 +68,7 @@ namespace BlogApp_Net8.Controllers
             await HttpContext.SignOutAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return RedirectToAction("login");
+            return RedirectToAction("Login");
         }
 
         [AllowAnonymous]

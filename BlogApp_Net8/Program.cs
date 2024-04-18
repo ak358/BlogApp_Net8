@@ -51,7 +51,7 @@ namespace BlogApp_Net8
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Login}/{action=login}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }

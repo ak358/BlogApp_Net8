@@ -101,6 +101,8 @@ namespace BlogApp_Net8.Controllers
 
                 _context.Add(article);
                 await _context.SaveChangesAsync();
+                await UpdateCategoryCount();
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryName"] = new SelectList(_context.Categories, "CategoryName", "CategoryName");
@@ -142,6 +144,7 @@ namespace BlogApp_Net8.Controllers
                 {
                     _context.Update(article);
                     await _context.SaveChangesAsync();
+                    await UpdateCategoryCount();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -198,12 +201,40 @@ namespace BlogApp_Net8.Controllers
             }
 
             await _context.SaveChangesAsync();
+            await UpdateCategoryCount();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ArticleExists(int id)
         {
             return _context.Articles.Any(e => e.Id == id);
+        }
+
+        private async Task UpdateCategoryCount()
+        {
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var categories = await _context.Categories
+                                        .Include(c => c.User)
+                                        .Where(c => c.UserId == userId)
+                                        .ToListAsync();
+
+            foreach (var category in categories)
+            {
+                // カテゴリの記事数を取得
+                var count = _context.Articles.Count(a =>
+                    a.Category.Id == category.Id && a.UserId == category.UserId);
+
+                // カテゴリの記事数が現在の記事数と異なる場合のみ更新
+                if (category.Count != count)
+                {
+                    category.Count = count;
+                    _context.Categories.Update(category); // カテゴリの記事数を更新
+                }
+            }
+
+            await _context.SaveChangesAsync(); // 変更をデータベースに保存
+
         }
     }
 }

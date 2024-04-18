@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BlogApp_Net8.Data;
 using BlogApp_Net8.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BlogApp_Net8.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly BlogDbContext _context;
