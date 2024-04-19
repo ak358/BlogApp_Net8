@@ -64,7 +64,7 @@ namespace BlogApp_Net8.Controllers
         {
             int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            ViewData["UserId"] = new SelectList(_context.Users.Where(c => c.Id == _userId), "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users.Where(c => c.Id == userId), "Id", "Id");
             return View();
         }
 

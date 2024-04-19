@@ -52,7 +52,7 @@ namespace BlogApp_Net8.Controllers
                         new ClaimsPrincipal(claimsIdentity),
                         authProperties);
 
-                    return RedirectToAction("Index", "Articles");
+                    return RedirectToAction("Mypage", "Home");
 
                 }
 

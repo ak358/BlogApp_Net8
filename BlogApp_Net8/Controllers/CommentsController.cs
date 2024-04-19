@@ -9,6 +9,8 @@ using BlogApp_Net8.Data;
 using BlogApp_Net8.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Humanizer;
+using Microsoft.AspNetCore.Routing;
 
 namespace BlogApp_Net8.Controllers
 {
@@ -62,7 +64,7 @@ namespace BlogApp_Net8.Controllers
                 UserId = userId
             };
 
-            return View(comment);
+            return RedirectToAction("detail", "Articles");
         }
 
         // POST: Comments/Create

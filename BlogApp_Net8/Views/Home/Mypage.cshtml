@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "My Page";
+}
+
+<div class="container px-4 py-5" id="icon-grid">
+    <h2 class="pb-2 border-bottom">
+        @ViewData["Title"]
+    </h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
+        <div class="col d-flex align-items-start">
+            <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#bootstrap" /></svg>
+            <div>
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                    <a class="link-secondary mx-1" asp-area="" asp-controller="Articles" asp-action="index">Article</a>
+                </h3>
+                <p>自分の記事を確認・作成・編集・削除できます。</p>
+            </div>
+        </div>
+        <div class="col d-flex align-items-start">
+            <svg class="bi text-body-secondary flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#cpu-fill" /></svg>
+            <div>
+                <h3 class="fw-bold mb-0 fs-4 text-body-emphasis">
+                    <a class="link-secondary mx-1" asp-area="" asp-controller="Categories" asp-action="index">Category</a>
+                </h3>
+                <p>記事のカテゴリーを確認・作成・編集・削除できます。</p>
+            </div>
+        </div>
+    </div>
+</div>

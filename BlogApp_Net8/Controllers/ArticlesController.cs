@@ -18,7 +18,6 @@ namespace BlogApp_Net8.Controllers
     {
         private readonly BlogDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        int _userId;    //ログイン中のユーザーID
 
         public ArticlesController(BlogDbContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -30,15 +29,15 @@ namespace BlogApp_Net8.Controllers
         public async Task<IActionResult> Index()
         {
             // ログイン中のユーザーのIDを取得
-            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            //_userId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            //int userId = Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier));
 
             // userId を使用して記事を取得するクエリを構築
             var articles = await _context.Articles
                 .Include(a => a.User)
                 .Include(a => a.Category)
                 .Include(a => a.Comments)
-                .Where(a => a.UserId == _userId)
+                .Where(a => a.UserId == userId)
                 .ToListAsync();
 
             // 取得した記事の中からカテゴリ名を取得する
@@ -81,8 +80,8 @@ namespace BlogApp_Net8.Controllers
         public IActionResult Create()
         {
             // ログイン中のユーザーのIDを取得
-            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == userId);
             ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View();
         }
@@ -111,13 +110,14 @@ namespace BlogApp_Net8.Controllers
                 return RedirectToAction(nameof(Index));
             }
             // ログイン中のユーザーのIDを取得
-            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == userId);
             ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View(article);
         }
 
         // GET: Articles/Edit/5
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -131,8 +131,8 @@ namespace BlogApp_Net8.Controllers
                 return NotFound();
             }
             // ログイン中のユーザーのIDを取得
-            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == userId);
             ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View(article);
         }
@@ -142,6 +142,7 @@ namespace BlogApp_Net8.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Body,CreateDate,UpdateDate,UserId,CategoryName")] Article article)
         {
             if (id != article.Id)
@@ -153,6 +154,10 @@ namespace BlogApp_Net8.Controllers
             {
                 try
                 {
+                    article.User = await _context.Users.Where(a => a.Id == article.UserId).FirstOrDefaultAsync();
+                    article.Comments = await _context.Comments.Where(c => c.ArticleId == article.Id).ToListAsync();
+                    article.Category = await _context.Categories.Where(c => c.CategoryName == article.CategoryName).FirstOrDefaultAsync();
+
                     _context.Update(article);
                     await _context.SaveChangesAsync();
                     await UpdateCategoryCount();
@@ -171,13 +176,14 @@ namespace BlogApp_Net8.Controllers
                 return RedirectToAction(nameof(Index));
             }
             // ログイン中のユーザーのIDを取得
-            _userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var categories = _context.Categories.Where(c => c.UserId == _userId);
+            int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var categories = _context.Categories.Where(c => c.UserId == userId);
             ViewData["CategoryName"] = new SelectList(categories, "CategoryName", "CategoryName");
             return View(article);
         }
 
         // GET: Articles/Delete/5
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -206,6 +212,7 @@ namespace BlogApp_Net8.Controllers
         // POST: Articles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var article = await _context.Articles.FindAsync(id);

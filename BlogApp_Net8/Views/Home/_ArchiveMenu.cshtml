@@ -1,0 +1,18 @@
+﻿@model IEnumerable<string>
+
+@* <ul>
+        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+        <li>@Html.ActionLink("About", "About", "Home")</li>
+        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+    </ul>
+*@
+
+<h4 class="fst-italic">Archive【工事中】</h4>
+
+@foreach (var item in Model)
+{
+    <ol class="list-unstyled mb-0">
+        <li><a href="#">@Html.DisplayFor(modelItem => item)<a href="#"></a></a></li>
+    </ol>
+}
+

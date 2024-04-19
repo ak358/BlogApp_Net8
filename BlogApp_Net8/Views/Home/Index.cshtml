@@ -1,8 +1,52 @@
-﻿@{
+﻿@model BlogApp_Net8.Models.HomeViewModel
+
+@{
     ViewData["Title"] = "Home Page";
+    var articles = Model.Articles;
+    var categoryNames = Model.CategoryNames;
+    var dates = Model.Dates;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@* <p>
+    <a asp-action="Create">Create New</a>
+</p>
+ *@
+
+
+<main class="container">
+
+    <div class="row g-5">
+        <div class="col-md-8">
+            @foreach (var article in articles)
+            {
+                <article class="blog-post border p-4">
+                    <h2 class="display-5 link-body-emphasis mb-1">@Html.DisplayFor(modelItem => article.Title)</h2>
+                    <p class="blog-post-meta">datatime by <a href="#">username</a></p>
+                    <p>@Html.DisplayFor(modelItem => article.CategoryName)</p>
+                    <p>@Html.DisplayFor(modelItem => article.Body)</p>
+                    <a asp-action="Details" asp-route-id="@article.Id">...more</a>
+                </article>
+            }
+
+            <nav class="blog-pagination" aria-label="Pagination">
+                <a class="btn btn-outline-primary rounded-pill" href="#">Older</a>
+                <a class="btn btn-outline-secondary rounded-pill disabled">Newer</a>
+            </nav>
+        </div>
+
+        <div class="col-md-4">
+            <div class="position-sticky" style="top: 2rem;">
+
+                <div class="p-4">
+                    @Html.Partial("_CategoryMenu", categoryNames)
+                </div>
+
+                <div class="p-4">
+                    @Html.Partial("_ArchiveMenu", dates)
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</main>
