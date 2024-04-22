@@ -24,7 +24,7 @@
                 <div class="col-4 pt-1">
                     @if (!User.Identity.IsAuthenticated)
                     {
-                        <a class="link-secondary" href="#">Subscribe</a>
+                        <a class="link-secondary" href="#">ユーザー登録</a>
                     }
                 </div>
                 <div class="col-4 text-center">
@@ -38,12 +38,12 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <div>ログイン中です。</div>
-                        <a class="link-secondary mx-1" asp-area="" asp-controller="Home" asp-action="Mypage">My Page</a>
-                        <a class="btn btn-sm btn-outline-secondary" asp-area="" asp-controller="Login" asp-action="logout">Logout</a>
+                        <a class="link-secondary mx-1" asp-area="" asp-controller="Home" asp-action="Mypage">マイページ</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-area="" asp-controller="Login" asp-action="logout">ログアウト</a>
                     }
                     else
                     {
-                        <a class="btn btn-sm btn-outline-secondary" asp-area="" asp-controller="Login" asp-action="login">Login</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-area="" asp-controller="Login" asp-action="login">ログイン</a>
                     }
 
                 </div>
